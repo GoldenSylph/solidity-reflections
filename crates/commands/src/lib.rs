@@ -105,6 +105,36 @@ pub async fn run(command: Command, verbosity: Verbosity<CustomLevel>) -> Result<
             })?;
             outro!("Done generating!");
         }
+        Command::Collect(cmd) => {
+            intro!("✨ Reflections Collect ✨");
+            step!("Collect ABIs and group by NatSpec tags");
+            // Use current dir as root unless specified by env
+            let root = env::var("REFLECTIONS_PROJECT_ROOT")
+                .ok()
+                .filter(|p| !p.is_empty())
+                .map_or(env::current_dir()?, PathBuf::from);
+
+            let paths = Paths::with_root_and_config(&root, None)?;
+            commands::collect::collect_command(&paths, cmd).await.inspect_err(|_| {
+                outro_cancel!("An error occurred during collection");
+            })?;
+            outro!("Done collecting!");
+        }
+        Command::Serve(cmd) => {
+            intro!("✨ Reflections Serve ✨");
+            step!("Serve Swagger UI for collected ABIs");
+            // Use current dir as root unless specified by env
+            let root = env::var("REFLECTIONS_PROJECT_ROOT")
+                .ok()
+                .filter(|p| !p.is_empty())
+                .map_or(env::current_dir()?, PathBuf::from);
+
+            let paths = Paths::with_root_and_config(&root, None)?;
+            commands::serve::serve_command(&paths, cmd).await.inspect_err(|_| {
+                outro_cancel!("An error occurred while starting server");
+            })?;
+            outro!("Done serving!");
+        }
         Command::Version(_) => {
             const VERSION: &str = env!("CARGO_PKG_VERSION");
             println!("reflections {VERSION}");

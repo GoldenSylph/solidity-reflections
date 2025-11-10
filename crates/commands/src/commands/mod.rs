@@ -2,8 +2,10 @@ pub use clap::{Parser, Subcommand};
 use clap_verbosity_flag::{LogLevel, VerbosityFilter};
 use derive_more::derive::From;
 
+pub mod collect;
 pub mod generate;
 pub mod init;
+pub mod serve;
 
 #[derive(Copy, Clone, Debug, Default)]
 pub struct CustomLevel;
@@ -56,6 +58,8 @@ pub struct Args {
 pub enum Command {
     Init(init::Init),
     Generate(generate::Generate),
+    Collect(collect::Collect),
+    Serve(serve::Serve),
     Version(Version),
 }
 

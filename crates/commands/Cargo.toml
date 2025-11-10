@@ -17,6 +17,7 @@ version.workspace = true
 workspace = true
 
 [dependencies]
+axum.workspace = true
 bon.workspace = true
 clap.workspace = true
 clap-verbosity-flag = "3.0.2"
@@ -24,9 +25,14 @@ cliclack.workspace = true
 derive_more.workspace = true
 env_logger = { version = "0.11.6", features = ["unstable-kv"] }
 reflections-core = { path = "../core", version = "0.1.0" }
+serde = { workspace = true, features = ["derive"] }
+serde_json.workspace = true
 tokio.workspace = true
+tower.workspace = true
+tower-http.workspace = true
 
 [dev-dependencies]
+reqwest = { workspace = true, features = ["json"] }
 testdir.workspace = true
 temp-env.workspace = true
 
