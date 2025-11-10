@@ -1,5 +1,5 @@
-//! Soldeer is a package manager for Solidity projects
-use soldeer_commands::{Args, commands::Parser as _, run};
+//! Reflections is a command-line tool for Solidity analysis
+use reflections_commands::{Args, commands::Parser as _, run};
 use yansi::{Condition, Paint as _};
 
 const HAVE_COLOR: Condition = Condition(|| {
@@ -28,10 +28,10 @@ fn banner() {
         format!(
             "
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-    ╔═╗╔═╗╦  ╔╦╗╔═╗╔═╗╦═╗       Solidity Package Manager
-    ╚═╗║ ║║   ║║║╣ ║╣ ╠╦╝
-    ╚═╝╚═╝╩═╝═╩╝╚═╝╚═╝╩╚═     github.com/mario-eth/soldeer
-           v{}                       soldeer.xyz
+    ╦═╗╔═╗╔═╗╦  ╔═╗╔═╗╔╦╗╦╔═╗╔╗╔╔═╗    Solidity Reflections
+    ╠╦╝║╣ ╠╣ ║  ║╣ ║   ║ ║║ ║║║║╚═╗    API Tool
+    ╩╚═╚═╝╚  ╩═╝╚═╝╚═╝ ╩ ╩╚═╝╝╚╝╚═╝
+           v{}        github.com/GoldenSylph/solidity-reflections
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 ",
             env!("CARGO_PKG_VERSION")

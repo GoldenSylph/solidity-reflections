@@ -3,18 +3,18 @@ members = ["crates/cli", "crates/core", "crates/commands"]
 resolver = "2"
 
 [workspace.package]
-authors = ["m4rio"]
+authors = ["reflections-team"]
 categories = ["development-tools"]
-description = "A minimal Solidity package manager written in Rust, best used with Foundry"
+description = "A command-line tool for Solidity reflections and analysis"
 edition = "2024"
 exclude = ["tests/"]
-homepage = "https://soldeer.xyz"
-keywords = ["solidity", "package-manager", "foundry"]
+homepage = "https://github.com/GoldenSylph/solidity-reflections"
+keywords = ["solidity", "reflections", "analysis"]
 license = "MIT"
 readme = "./README.md"
-repository = "https://github.com/mario-eth/soldeer"
+repository = "https://github.com/GoldenSylph/solidity-reflections"
 rust-version = "1.88"
-version = "0.9.0"
+version = "0.1.0"
 
 [workspace.lints.clippy]
 dbg-macro = "warn"

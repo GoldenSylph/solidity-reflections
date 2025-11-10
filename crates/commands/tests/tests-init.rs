@@ -1,10 +1,5 @@
-use soldeer_commands::{Command, Verbosity, commands::init::Init, run};
-use soldeer_core::{
-    config::{ConfigLocation, read_config_deps},
-    lock::read_lockfile,
-    registry::get_latest_version,
-    utils::run_git_command,
-};
+use reflections_commands::{Command, Verbosity, commands::init::Init, run};
+use reflections_core::config::ConfigLocation;
 use std::fs;
 use temp_env::async_with_vars;
 use testdir::testdir;
@@ -12,109 +7,49 @@ use testdir::testdir;
 #[tokio::test]
 async fn test_init_clean() {
     let dir = testdir!();
-    run_git_command(
-        ["clone", "--recursive", "https://github.com/foundry-rs/forge-template.git", "."],
-        Some(&dir),
-    )
-    .await
-    .unwrap();
-    fs::write(dir.join("soldeer.toml"), "[dependencies]\n").unwrap();
+    fs::create_dir_all(&dir).unwrap();
+    fs::write(dir.join(".gitignore"), "# Test gitignore\n").unwrap();
+    
     let cmd: Command =
-        Init::builder().clean(true).config_location(ConfigLocation::Soldeer).build().into();
+        Init::builder().clean(true).config_location(ConfigLocation::Reflections).build().into();
     let res = async_with_vars(
-        [("SOLDEER_PROJECT_ROOT", Some(dir.to_string_lossy().as_ref()))],
+        [("REFLECTIONS_PROJECT_ROOT", Some(dir.to_string_lossy().as_ref()))],
         run(cmd, Verbosity::default()),
     )
     .await;
     assert!(res.is_ok(), "{res:?}");
-    assert!(!dir.join("lib").exists());
-    assert!(!dir.join(".gitmodules").exists());
-    assert!(dir.join("dependencies").exists());
-    let (deps, _) = read_config_deps(dir.join("soldeer.toml")).unwrap();
-    assert_eq!(deps.first().unwrap().name(), "forge-std");
-    let lock = read_lockfile(dir.join("soldeer.lock")).unwrap();
-    assert_eq!(lock.entries.first().unwrap().name(), "forge-std");
-    let remappings = fs::read_to_string(dir.join("remappings.txt")).unwrap();
-    assert!(remappings.contains("forge-std"));
+    
     let gitignore = fs::read_to_string(dir.join(".gitignore")).unwrap();
-    assert!(gitignore.contains("/dependencies"));
-    let foundry_config = fs::read_to_string(dir.join("foundry.toml")).unwrap();
-    assert!(foundry_config.contains("libs = [\"dependencies\"]"));
+    assert!(gitignore.contains("/reflections-output"));
 }
 
 #[tokio::test]
 async fn test_init_no_clean() {
     let dir = testdir!();
-    run_git_command(
-        ["clone", "--recursive", "https://github.com/foundry-rs/forge-template.git", "."],
-        Some(&dir),
-    )
-    .await
-    .unwrap();
-    fs::write(dir.join("soldeer.toml"), "[dependencies]\n").unwrap();
-    let cmd: Command = Init::builder().config_location(ConfigLocation::Soldeer).build().into();
+    fs::create_dir_all(&dir).unwrap();
+    fs::write(dir.join(".gitignore"), "# Test gitignore\n").unwrap();
+    
+    let cmd: Command = Init::builder().config_location(ConfigLocation::Reflections).build().into();
     let res = async_with_vars(
-        [("SOLDEER_PROJECT_ROOT", Some(dir.to_string_lossy().as_ref()))],
+        [("REFLECTIONS_PROJECT_ROOT", Some(dir.to_string_lossy().as_ref()))],
         run(cmd, Verbosity::default()),
     )
     .await;
     assert!(res.is_ok(), "{res:?}");
-    assert!(dir.join("lib").exists());
-    assert!(dir.join(".gitmodules").exists());
-    assert!(dir.join("dependencies").exists());
-    let (deps, _) = read_config_deps(dir.join("soldeer.toml")).unwrap();
-    assert_eq!(deps.first().unwrap().name(), "forge-std");
-    let lock = read_lockfile(dir.join("soldeer.lock")).unwrap();
-    assert_eq!(lock.entries.first().unwrap().name(), "forge-std");
-    let remappings = fs::read_to_string(dir.join("remappings.txt")).unwrap();
-    assert!(remappings.contains("forge-std"));
+    
     let gitignore = fs::read_to_string(dir.join(".gitignore")).unwrap();
-    assert!(gitignore.contains("/dependencies"));
-    let foundry_config = fs::read_to_string(dir.join("foundry.toml")).unwrap();
-    assert!(foundry_config.contains("libs = [\"dependencies\"]"));
-}
-
-#[tokio::test]
-async fn test_init_no_remappings() {
-    let dir = testdir!();
-    run_git_command(
-        ["clone", "--recursive", "https://github.com/foundry-rs/forge-template.git", "."],
-        Some(&dir),
-    )
-    .await
-    .unwrap();
-    let contents = r"[soldeer]
-remappings_generate = false
-
-[dependencies]
-";
-    fs::write(dir.join("soldeer.toml"), contents).unwrap();
-    let cmd: Command =
-        Init::builder().clean(true).config_location(ConfigLocation::Soldeer).build().into();
-    let res = async_with_vars(
-        [("SOLDEER_PROJECT_ROOT", Some(dir.to_string_lossy().as_ref()))],
-        run(cmd, Verbosity::default()),
-    )
-    .await;
-    assert!(res.is_ok(), "{res:?}");
-    assert!(!dir.join("remappings.txt").exists());
+    assert!(gitignore.contains("/reflections-output"));
 }
 
 #[tokio::test]
 async fn test_init_no_gitignore() {
     let dir = testdir!();
-    run_git_command(
-        ["clone", "--recursive", "https://github.com/foundry-rs/forge-template.git", "."],
-        Some(&dir),
-    )
-    .await
-    .unwrap();
-    fs::remove_file(dir.join(".gitignore")).unwrap();
-    fs::write(dir.join("soldeer.toml"), "[dependencies]\n").unwrap();
+    fs::create_dir_all(&dir).unwrap();
+    
     let cmd: Command =
-        Init::builder().clean(true).config_location(ConfigLocation::Soldeer).build().into();
+        Init::builder().clean(true).config_location(ConfigLocation::Reflections).build().into();
     let res = async_with_vars(
-        [("SOLDEER_PROJECT_ROOT", Some(dir.to_string_lossy().as_ref()))],
+        [("REFLECTIONS_PROJECT_ROOT", Some(dir.to_string_lossy().as_ref()))],
         run(cmd, Verbosity::default()),
     )
     .await;
@@ -123,60 +58,21 @@ async fn test_init_no_gitignore() {
 }
 
 #[tokio::test]
-async fn test_init_select_foundry_location() {
+async fn test_init_existing_reflections_in_gitignore() {
     let dir = testdir!();
-
+    fs::create_dir_all(&dir).unwrap();
+    fs::write(dir.join(".gitignore"), "# Test\n\n# Reflections\n/reflections-output\n").unwrap();
+    
     let cmd: Command =
-        Init::builder().clean(true).config_location(ConfigLocation::Foundry).build().into();
+        Init::builder().config_location(ConfigLocation::Foundry).build().into();
     let res = async_with_vars(
-        [("SOLDEER_PROJECT_ROOT", Some(dir.to_string_lossy().as_ref()))],
+        [("REFLECTIONS_PROJECT_ROOT", Some(dir.to_string_lossy().as_ref()))],
         run(cmd, Verbosity::default()),
     )
     .await;
     assert!(res.is_ok(), "{res:?}");
-
-    let forge_std = get_latest_version("forge-std").await.unwrap();
-    let config_path = dir.join("foundry.toml");
-    assert!(config_path.exists());
-
-    let contents = format!(
-        r#"[profile.default]
-src = "src"
-out = "out"
-libs = ["dependencies"]
-
-[dependencies]
-forge-std = "{}"
-
-# See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options
-"#,
-        forge_std.version_req()
-    );
-    assert_eq!(fs::read_to_string(config_path).unwrap(), contents);
-}
-
-#[tokio::test]
-async fn test_init_select_soldeer_location() {
-    let dir = testdir!();
-
-    let cmd: Command =
-        Init::builder().clean(true).config_location(ConfigLocation::Soldeer).build().into();
-    let res = async_with_vars(
-        [("SOLDEER_PROJECT_ROOT", Some(dir.to_string_lossy().as_ref()))],
-        run(cmd, Verbosity::default()),
-    )
-    .await;
-    assert!(res.is_ok(), "{res:?}");
-
-    let forge_std = get_latest_version("forge-std").await.unwrap();
-    let config_path = dir.join("soldeer.toml");
-    assert!(config_path.exists());
-
-    let contents = format!(
-        r#"[dependencies]
-forge-std = "{}"
-"#,
-        forge_std.version_req()
-    );
-    assert_eq!(fs::read_to_string(config_path).unwrap(), contents);
+    
+    let gitignore = fs::read_to_string(dir.join(".gitignore")).unwrap();
+    // Should not add duplicate entry
+    assert_eq!(gitignore.matches("/reflections-output").count(), 1);
 }

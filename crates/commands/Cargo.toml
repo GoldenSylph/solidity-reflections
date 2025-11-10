@@ -1,6 +1,6 @@
 [package]
-name = "soldeer-commands"
-description = "High-level commands for the Soldeer CLI"
+name = "reflections-commands"
+description = "High-level commands for the Reflections CLI"
 authors.workspace = true
 categories.workspace = true
 edition.workspace = true
@@ -22,21 +22,13 @@ clap.workspace = true
 clap-verbosity-flag = "3.0.2"
 cliclack.workspace = true
 derive_more.workspace = true
-email-address-parser = "2.0.0"
 env_logger = { version = "0.11.6", features = ["unstable-kv"] }
-path-slash.workspace = true
-rayon.workspace = true
-soldeer-core = { path = "../core", version = "0.9.0" }
+reflections-core = { path = "../core", version = "0.1.0" }
 tokio.workspace = true
 
 [dev-dependencies]
-mockito.workspace = true
-reqwest.workspace = true
-temp-env.workspace = true
 testdir.workspace = true
+temp-env.workspace = true
 
 [features]
-default = ["rustls"]
-rustls = ["soldeer-core/rustls"]
-default-tls = ["soldeer-core/default-tls"]
-serde = ["soldeer-core/serde"]
+default = []

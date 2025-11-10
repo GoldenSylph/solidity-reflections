@@ -1,6 +1,6 @@
-## Contributing to Soldeer
+## Contributing to Reflections
 
-Thanks for your interest in improving Soldeer!
+Thanks for your interest in improving Reflections!
 
 There are multiple opportunities to contribute at any level. It doesn't matter if you are just getting started with Rust
 or are the most weathered expert, we can use your help.
@@ -8,23 +8,19 @@ or are the most weathered expert, we can use your help.
 This document will help you get started. **Do not let the document intimidate you**.
 It should be considered as a guide to help you navigate the process.
 
-The [Contributors' Telegram Chat][telegram] is available for any concerns you may have that are
-not covered in this guide.
-
 ### Code of Conduct
 
-The Soldeer project adheres to the [Rust Code of Conduct][rust-coc]. This code of conduct describes the _minimum_
+The Reflections project adheres to the [Rust Code of Conduct][rust-coc]. This code of conduct describes the _minimum_
 behavior expected from all contributors.
 
-Instances of violations of the Code of Conduct can contact the project maintainers on the
-[Contributors' Telegram Chat][telegram].
+Instances of violations of the Code of Conduct can contact the project maintainers through the email - `simplavero@gmail.com`
 
 ### Ways to contribute
 
 There are fundamentally four ways an individual can contribute:
 
 1. **By opening an issue:** For example, if you believe that you have uncovered a bug
-   in Soldeer, creating a new issue in the issue tracker is the way to report it.
+   in Reflections, creating a new issue in the issue tracker is the way to report it.
 2. **By adding context:** Providing additional context to existing issues,
    such as screenshots and code snippets, which help resolve issues.
 3. **By resolving issues:** Typically this is done in the form of either
@@ -45,9 +41,9 @@ or elsewhere.
 If you have reviewed existing documentation and still have questions, or you are having problems, you can get help in
 the following ways:
 
-- **Asking in the support Telegram:** The [Soldeer Support Telegram][telegram] is a fast and easy way to ask questions.
+- **Writing an email:** The [maintainer's email][mailto:simplavero@gmail.com] is a fast and easy way to ask questions.
 
-As Soldeer is still in heavy development, the documentation can be a bit scattered.
+As Reflections is still in heavy development, the documentation can be a bit scattered.
 
 ### Submitting a bug report
 
@@ -59,7 +55,7 @@ unclear.
 
 The most important pieces of information we need in a bug report are:
 
-- The Soldeer version you are on (and that it is up to date)
+- The Reflections version you are on (and that it is up to date)
 - The platform you are on (Windows, macOS, an M1 Mac or Linux)
 - Code snippets if this is happening in relation to testing or building code
 - Concrete steps to reproduce the bug
@@ -80,7 +76,7 @@ If you have examples of other tools that have the feature you are requesting, pl
 
 ### Resolving an issue
 
-Pull requests are the way concrete changes are made to the code, documentation, and dependencies of Soldeer.
+Pull requests are the way concrete changes are made to the code, documentation, and dependencies of Reflections.
 
 Please also make sure that the following commands pass if you have changed the code:
 
@@ -104,9 +100,9 @@ and use the following VSCode user settings:
 
 #### Adding tests
 
-If the change being proposed alters code, it is either adding new functionality to Soldeer, or fixing existing, broken
+If the change being proposed alters code, it is either adding new functionality to Reflections, or fixing existing, broken
 functionality.
-In both of these cases, the pull request should include one or more tests to ensure that Soldeer does not regress
+In both of these cases, the pull request should include one or more tests to ensure that Reflections does not regress
 in the future.
 
 Types of tests include:
@@ -161,7 +157,7 @@ Keep an eye out for comments from code owners to provide guidance on conflicting
 
 #### Reviewing pull requests
 
-**Any Soldeer community member is welcome to review any pull request**.
+**Any Reflections community member is welcome to review any pull request**.
 
 All contributors who choose to review and provide feedback on pull requests have a responsibility to both the project
 and individual making the contribution. Reviews and feedback must be helpful, insightful, and geared towards improving
@@ -187,8 +183,8 @@ matches. Do not succumb to that temptation..
 
 Focus first on the most significant aspects of the change:
 
-1. Does this change make sense for Soldeer?
-2. Does this change make Soldeer better, even if only incrementally?
+1. Does this change make sense for Reflections?
+2. Does this change make Reflections better, even if only incrementally?
 3. Are there clear bugs or larger scale issues that need attending?
 4. Are the commit messages readable and correct? If it contains a breaking change, is it clear enough?
 
@@ -202,7 +198,7 @@ Specific performance optimization techniques, coding styles and conventions chan
 give to a new contributor never does.
 
 Nits (requests for small changes that are not essential) are fine, but try to avoid stalling the pull request. Most nits
-can typically be fixed by the Soldeer maintainers merging the pull request, but they can also be an opportunity for the
+can typically be fixed by the Reflections maintainers merging the pull request, but they can also be an opportunity for the
 contributor to learn a bit more about the project.
 
 It is always good to clearly indicate nits when you comment, e.g.:
@@ -214,8 +210,8 @@ If your comments were addressed but were not folded after new commits, or if the
 ##### Be aware of the person behind the code
 
 Be aware that _how_ you communicate requests and reviews in your feedback can have a significant impact on the success
-of the pull request. Yes, we may merge a particular change that makes Soldeer better, but the individual might just not
-want to have anything to do with Soldeer ever again. The goal is not just having good code.
+of the pull request. Yes, we may merge a particular change that makes Reflections better, but the individual might just not
+want to have anything to do with Reflections ever again. The goal is not just having good code.
 
 ##### Abandoned or stale pull requests
 
@@ -232,3 +228,4 @@ _Adapted from the [ethers-rs contributing guide](https://github.com/gakonst/ethe
 [mcve]: https://stackoverflow.com/help/mcve
 [hiding-a-comment]: https://help.github.com/articles/managing-disruptive-comments/#hiding-a-comment
 [conventional-commits]: https://www.conventionalcommits.org/en/v1.0.0
+

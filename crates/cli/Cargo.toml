@@ -1,5 +1,5 @@
 [package]
-name = "soldeer"
+name = "reflections"
 description.workspace = true
 authors.workspace = true
 categories.workspace = true
@@ -17,10 +17,10 @@ version.workspace = true
 workspace = true
 
 [[bin]]
-name = "soldeer"
+name = "reflections"
 path = "src/main.rs"
 
 [dependencies]
-soldeer-commands = { path = "../commands", version = "0.9.0" }
+reflections-commands = { path = "../commands", version = "0.1.0" }
 tokio.workspace = true
 yansi = { version = "1.0.1", features = ["detect-tty", "detect-env"] }

@@ -2,13 +2,7 @@ pub use clap::{Parser, Subcommand};
 use clap_verbosity_flag::{LogLevel, VerbosityFilter};
 use derive_more::derive::From;
 
-pub mod clean;
 pub mod init;
-pub mod install;
-pub mod login;
-pub mod push;
-pub mod uninstall;
-pub mod update;
 
 #[derive(Copy, Clone, Debug, Default)]
 pub struct CustomLevel;
@@ -42,9 +36,9 @@ Otherwise:
     }
 }
 
-/// A minimal Solidity dependency manager
+/// A Solidity analysis and reflection tool
 #[derive(Parser, Debug, bon::Builder)]
-#[clap(name = "soldeer", author = "m4rio.eth", version)]
+#[clap(name = "reflections", author = "reflections-team", version)]
 #[non_exhaustive]
 pub struct Args {
     #[clap(subcommand)]
@@ -55,28 +49,15 @@ pub struct Args {
     pub verbose: clap_verbosity_flag::Verbosity<CustomLevel>,
 }
 
-/// The available commands for Soldeer
+/// The available commands for Reflections
 #[derive(Debug, Clone, Subcommand, From)]
 #[non_exhaustive]
 pub enum Command {
     Init(init::Init),
-    Install(install::Install),
-    Update(update::Update),
-    Login(login::Login),
-    Push(push::Push),
-    Uninstall(uninstall::Uninstall),
-    Clean(clean::Clean),
     Version(Version),
 }
 
-/// Display the version of Soldeer
+/// Display the version of Reflections
 #[derive(Debug, Clone, Default, Parser)]
 #[non_exhaustive]
 pub struct Version {}
-
-fn validate_dependency(dep: &str) -> std::result::Result<String, String> {
-    if dep.split('~').count() != 2 {
-        return Err("The dependency should be in the format <DEPENDENCY>~<VERSION>".to_string());
-    }
-    Ok(dep.to_string())
-}

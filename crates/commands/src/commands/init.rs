@@ -1,20 +1,15 @@
 use crate::{
     ConfigLocation,
-    utils::{Progress, remark, success},
+    utils::{remark, success},
 };
 use clap::Parser;
-use soldeer_core::{
+use reflections_core::{
     Result,
-    config::{Paths, add_to_config, read_soldeer_config, update_config_libs},
-    install::{InstallProgress, ensure_dependencies_dir, install_dependency},
-    lock::add_to_lockfile,
-    registry::get_latest_version,
-    remappings::{RemappingsAction, edit_remappings},
-    utils::remove_forge_lib,
+    config::Paths,
 };
 use std::fs;
 
-/// Convert a Foundry project to use Soldeer
+/// Initialize a Foundry project to use Reflections
 #[derive(Debug, Clone, Default, Parser, bon::Builder)]
 #[allow(clippy::duplicated_attributes)]
 #[builder(on(String, into), on(ConfigLocation, into))]
@@ -36,42 +31,21 @@ pub struct Init {
 
 pub(crate) async fn init_command(paths: &Paths, cmd: Init) -> Result<()> {
     if cmd.clean {
-        remark!("Flag `--clean` was set, removing `lib` dir and submodules");
-        remove_forge_lib(&paths.root).await?;
+        remark!("Flag `--clean` was set, cleaning project");
+        // Add your cleaning logic here
     }
-    let config = read_soldeer_config(&paths.config)?;
-    success!("Done reading config");
-    ensure_dependencies_dir(&paths.dependencies)?;
-    let dependency = get_latest_version("forge-std").await?;
-    let (progress, monitor) = InstallProgress::new();
-    let bars = Progress::new(format!("Installing {dependency}"), 1, monitor);
-    bars.start_all();
-    let lock = install_dependency(&dependency, None, &paths.dependencies, None, false, progress)
-        .await
-        .inspect_err(|e| {
-            bars.set_error(e);
-        })?;
-    bars.stop_all();
-    add_to_config(&dependency, &paths.config)?;
-    let foundry_config = paths.root.join("foundry.toml");
-    if foundry_config.exists() {
-        update_config_libs(foundry_config)?;
-    }
-    success!("Dependency added to config");
-    add_to_lockfile(lock, &paths.lock)?;
-    success!("Dependency added to lockfile");
-    edit_remappings(&RemappingsAction::Add(dependency), &config, paths)?;
-    success!("Dependency added to remappings");
-
+    
+    success!("Reflections initialized successfully!");
+    
     let gitignore_path = paths.root.join(".gitignore");
     if gitignore_path.exists() {
         let mut gitignore = fs::read_to_string(&gitignore_path)?;
-        if !gitignore.contains("dependencies") {
-            gitignore.push_str("\n\n# Soldeer\n/dependencies\n");
+        if !gitignore.contains("reflections") {
+            gitignore.push_str("\n\n# Reflections\n/reflections-output\n");
             fs::write(&gitignore_path, gitignore)?;
         }
     }
-    success!("Added `dependencies` to .gitignore");
+    success!("Added `reflections-output` to .gitignore");
 
     Ok(())
 }

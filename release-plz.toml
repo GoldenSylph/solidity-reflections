@@ -6,16 +6,16 @@ publish = false                   # cargo publish will be done by hand for now
 changelog_path = "./CHANGELOG.md"
 
 [[package]]
-name = "soldeer-core"
-version_group = "soldeer"
+name = "reflections-core"
+version_group = "reflections"
 
 [[package]]
-name = "soldeer-commands"
-version_group = "soldeer"
+name = "reflections-commands"
+version_group = "reflections"
 
 [[package]]
-name = "soldeer"
-version_group = "soldeer"
+name = "reflections"
+version_group = "reflections"
 git_tag_name = "v{{ version }}"
 git_release_name = "v{{ version }}"
 git_tag_enable = true

@@ -1,4 +1,4 @@
-//! High-level commands for the Soldeer CLI
+//! High-level commands for the Reflections CLI
 #![cfg_attr(docsrs, feature(doc_cfg))]
 pub use crate::commands::{Args, Command};
 use clap::builder::PossibleValue;
@@ -6,7 +6,7 @@ pub use clap_verbosity_flag::Verbosity;
 use clap_verbosity_flag::log::Level;
 use commands::CustomLevel;
 use derive_more::derive::FromStr;
-use soldeer_core::{Result, config::Paths};
+use reflections_core::{Result, config::Paths};
 use std::{
     env,
     path::PathBuf,
@@ -19,36 +19,36 @@ pub mod utils;
 
 static TUI_ENABLED: AtomicBool = AtomicBool::new(true);
 
-/// The location where the Soldeer config should be stored.
+/// The location where the Reflections config should be stored.
 ///
 /// This is a new type so we can implement the `ValueEnum` trait for it.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, FromStr)]
-pub struct ConfigLocation(soldeer_core::config::ConfigLocation);
+pub struct ConfigLocation(reflections_core::config::ConfigLocation);
 
 impl clap::ValueEnum for ConfigLocation {
     fn value_variants<'a>() -> &'a [Self] {
         &[
-            Self(soldeer_core::config::ConfigLocation::Foundry),
-            Self(soldeer_core::config::ConfigLocation::Soldeer),
+            Self(reflections_core::config::ConfigLocation::Foundry),
+            Self(reflections_core::config::ConfigLocation::Reflections),
         ]
     }
 
     fn to_possible_value(&self) -> Option<clap::builder::PossibleValue> {
         Some(match self.0 {
-            soldeer_core::config::ConfigLocation::Foundry => PossibleValue::new("foundry"),
-            soldeer_core::config::ConfigLocation::Soldeer => PossibleValue::new("soldeer"),
+            reflections_core::config::ConfigLocation::Foundry => PossibleValue::new("foundry"),
+            reflections_core::config::ConfigLocation::Reflections => PossibleValue::new("reflections"),
         })
     }
 }
 
-impl From<ConfigLocation> for soldeer_core::config::ConfigLocation {
+impl From<ConfigLocation> for reflections_core::config::ConfigLocation {
     fn from(value: ConfigLocation) -> Self {
         value.0
     }
 }
 
-impl From<soldeer_core::config::ConfigLocation> for ConfigLocation {
-    fn from(value: soldeer_core::config::ConfigLocation) -> Self {
+impl From<reflections_core::config::ConfigLocation> for ConfigLocation {
+    fn from(value: reflections_core::config::ConfigLocation) -> Self {
         Self(value)
     }
 }
@@ -74,83 +74,29 @@ pub async fn run(command: Command, verbosity: Verbosity<CustomLevel>) -> Result<
     }
     match command {
         Command::Init(cmd) => {
-            intro!("🦌 Soldeer Init 🦌");
-            step!("Initialize Foundry project to use Soldeer");
+            intro!("✨ Reflections Init ✨");
+            step!("Initialize Foundry project to use Reflections");
             // for init, we always use the current dir as root, unless specified by env
-            let root = env::var("SOLDEER_PROJECT_ROOT")
+            let root = env::var("REFLECTIONS_PROJECT_ROOT")
                 .ok()
                 .filter(|p| !p.is_empty())
                 .map_or(env::current_dir()?, PathBuf::from);
-            let paths = Paths::with_root_and_config(
-                &root,
-                Some(get_config_location(&root, cmd.config_location)?),
-            )?;
+            
+            let config_loc = if let Some(loc) = cmd.config_location {
+                loc.into()
+            } else {
+                get_config_location()?.into()
+            };
+            
+            let paths = Paths::with_root_and_config(&root, Some(config_loc))?;
             commands::init::init_command(&paths, cmd).await.inspect_err(|_| {
                 outro_cancel!("An error occurred during initialization");
             })?;
             outro!("Done initializing!");
         }
-        Command::Install(cmd) => {
-            intro!("🦌 Soldeer Install 🦌");
-            let root = Paths::get_root_path();
-            let paths = Paths::with_root_and_config(
-                &root,
-                Some(get_config_location(&root, cmd.config_location)?),
-            )?;
-            commands::install::install_command(&paths, cmd).await.inspect_err(|_| {
-                outro_cancel!("An error occurred during install");
-            })?;
-            outro!("Done installing!");
-        }
-        Command::Update(cmd) => {
-            intro!("🦌 Soldeer Update 🦌");
-            let root = Paths::get_root_path();
-            let paths = Paths::with_root_and_config(
-                &root,
-                Some(get_config_location(&root, cmd.config_location)?),
-            )?;
-            commands::update::update_command(&paths, cmd).await.inspect_err(|_| {
-                outro_cancel!("An error occurred during the update");
-            })?;
-            outro!("Done updating!");
-        }
-        Command::Uninstall(cmd) => {
-            intro!("🦌 Soldeer Uninstall 🦌");
-            let root = Paths::get_root_path();
-            let paths =
-                Paths::with_root_and_config(&root, Some(get_config_location(&root, None)?))?;
-            commands::uninstall::uninstall_command(&paths, &cmd).inspect_err(|_| {
-                outro_cancel!("An error occurred during uninstall");
-            })?;
-            outro!("Done uninstalling!");
-        }
-        Command::Clean(cmd) => {
-            intro!("🦌 Soldeer Clean 🦌");
-            let root = Paths::get_root_path();
-            let paths =
-                Paths::with_root_and_config(&root, Some(get_config_location(&root, None)?))?;
-            commands::clean::clean_command(&paths, &cmd).inspect_err(|_| {
-                outro_cancel!("An error occurred during clean");
-            })?;
-            outro!("Done cleaning!");
-        }
-        Command::Login(cmd) => {
-            intro!("🦌 Soldeer Login 🦌");
-            commands::login::login_command(cmd).await.inspect_err(|_| {
-                outro_cancel!("An error occurred during login");
-            })?;
-            outro!("Done logging in!");
-        }
-        Command::Push(cmd) => {
-            intro!("🦌 Soldeer Push 🦌");
-            commands::push::push_command(cmd).await.inspect_err(|_| {
-                outro_cancel!("An error occurred during push");
-            })?;
-            outro!("Done!");
-        }
         Command::Version(_) => {
             const VERSION: &str = env!("CARGO_PKG_VERSION");
-            println!("soldeer {VERSION}");
+            println!("reflections {VERSION}");
         }
     }
     Ok(())
