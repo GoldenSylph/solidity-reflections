@@ -1,0 +1,4 @@
+# Reflections - DI Framework
+# The entire scripts/reflections/di/ directory is scaffolded by `reflections init`
+# and should not be committed to version control
+/scripts/reflections/

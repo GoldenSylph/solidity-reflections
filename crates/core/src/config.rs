@@ -1,6 +1,7 @@
 //! Manage the Reflections configuration
 use crate::errors::ConfigError;
 use log::debug;
+use serde::{Deserialize, Serialize};
 use std::{
     env,
     path::{Path, PathBuf},
@@ -19,9 +20,6 @@ pub struct Paths {
 
     /// The path to the config file (foundry.toml or reflections.toml).
     pub config: PathBuf,
-
-    /// The path to the dependencies folder (does not need to exist).
-    pub dependencies: PathBuf,
 
     /// The path to the remappings file (does not need to exist).
     pub remappings: PathBuf,
@@ -46,10 +44,9 @@ impl Paths {
     ) -> Result<Self> {
         let root = root.as_ref();
         let config = Self::get_config_path(root, config_location)?;
-        let dependencies = root.join("dependencies");
         let remappings = root.join("remappings.txt");
 
-        Ok(Self { root: root.to_path_buf(), config, dependencies, remappings })
+        Ok(Self { root: root.to_path_buf(), config, remappings })
     }
 
     /// Get the root directory path.
@@ -76,9 +73,10 @@ impl Paths {
         root: impl AsRef<Path>,
         config_location: Option<ConfigLocation>,
     ) -> Result<PathBuf> {
-        let location = config_location.or_else(|| detect_config_location(root.as_ref()))
+        let location = config_location
+            .or_else(|| detect_config_location(root.as_ref()))
             .unwrap_or(ConfigLocation::Foundry);
-        
+
         Ok(match location {
             ConfigLocation::Foundry => root.as_ref().join("foundry.toml"),
             ConfigLocation::Reflections => root.as_ref().join("reflections.toml"),
@@ -118,5 +116,60 @@ pub fn detect_config_location(root: impl AsRef<Path>) -> Option<ConfigLocation> 
         Some(ConfigLocation::Reflections)
     } else {
         None
+    }
+}
+
+/// Reflections configuration structure
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "kebab-case")]
+pub struct ReflectionsConfig {
+    /// OpenZeppelin contracts version
+    #[serde(default = "default_openzeppelin_version")]
+    pub openzeppelin_version: String,
+    
+    /// zkSync-OS repository URL
+    #[serde(default = "default_zksync_os_url")]
+    pub zksync_os_url: String,
+}
+
+fn default_openzeppelin_version() -> String {
+    "v5.1.0".to_string()
+}
+
+fn default_zksync_os_url() -> String {
+    "https://github.com/matter-labs/zksync-os".to_string()
+}
+
+impl Default for ReflectionsConfig {
+    fn default() -> Self {
+        Self {
+            openzeppelin_version: default_openzeppelin_version(),
+            zksync_os_url: default_zksync_os_url(),
+        }
+    }
+}
+
+impl ReflectionsConfig {
+    /// Load configuration from reflections.toml file
+    pub fn load(config_path: impl AsRef<Path>) -> Result<Self> {
+        let config_path = config_path.as_ref();
+        if !config_path.exists() {
+            return Ok(Self::default());
+        }
+
+        let content = std::fs::read_to_string(config_path)?;
+        
+        toml_edit::de::from_str(&content).map_err(ConfigError::DeserializeError)
+    }
+
+    /// Save configuration to reflections.toml file
+    pub fn save(&self, config_path: impl AsRef<Path>) -> Result<()> {
+        let content = toml_edit::ser::to_string_pretty(self)
+            .map_err(ConfigError::SerializeError)?;
+        
+        std::fs::write(config_path.as_ref(), content)
+            .map_err(ConfigError::FileWriteError)?;
+        
+        Ok(())
     }
 }

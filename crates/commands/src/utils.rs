@@ -24,43 +24,67 @@ pub fn get_config_location() -> Result<crate::ConfigLocation> {
     ))
 }
 
-macro_rules! define_cliclack_macro {
-    ($name:ident, $path:path) => {
-        macro_rules! $name {
-            ($expression:expr) => {
-                if $crate::TUI_ENABLED.load(::std::sync::atomic::Ordering::Relaxed) {
-                    $path($expression).ok();
-                }
-            };
+macro_rules! intro {
+    ($msg:expr) => {
+        if $crate::TUI_ENABLED.load(::std::sync::atomic::Ordering::Relaxed) {
+            ::cliclack::intro($msg).ok();
         }
     };
 }
 
-define_cliclack_macro!(intro, ::cliclack::intro);
-define_cliclack_macro!(note, ::cliclack::note);
-define_cliclack_macro!(outro, ::cliclack::outro);
-define_cliclack_macro!(outro_cancel, ::cliclack::outro_cancel);
-define_cliclack_macro!(outro_note, ::cliclack::outro_note);
-define_cliclack_macro!(error, ::cliclack::log::error);
-define_cliclack_macro!(info, ::cliclack::log::info);
-define_cliclack_macro!(remark, ::cliclack::log::remark);
-define_cliclack_macro!(step, ::cliclack::log::step);
-define_cliclack_macro!(success, ::cliclack::log::success);
-define_cliclack_macro!(warning, ::cliclack::log::warning);
+macro_rules! outro {
+    ($msg:expr) => {
+        if $crate::TUI_ENABLED.load(::std::sync::atomic::Ordering::Relaxed) {
+            ::cliclack::outro($msg).ok();
+        }
+    };
+}
 
-#[allow(unused_imports)]
-pub(crate) use error;
-#[allow(unused_imports)]
-pub(crate) use info;
+macro_rules! outro_cancel {
+    ($msg:expr) => {
+        if $crate::TUI_ENABLED.load(::std::sync::atomic::Ordering::Relaxed) {
+            ::cliclack::outro_cancel($msg).ok();
+        }
+    };
+}
+
+macro_rules! step {
+    ($msg:expr) => {
+        if $crate::TUI_ENABLED.load(::std::sync::atomic::Ordering::Relaxed) {
+            ::cliclack::log::step($msg).ok();
+        }
+    };
+}
+
+macro_rules! remark {
+    ($msg:expr) => {
+        if $crate::TUI_ENABLED.load(::std::sync::atomic::Ordering::Relaxed) {
+            ::cliclack::log::remark($msg).ok();
+        }
+    };
+    ($fmt:expr, $($arg:expr),+) => {
+        if $crate::TUI_ENABLED.load(::std::sync::atomic::Ordering::Relaxed) {
+            ::cliclack::log::remark(format!($fmt, $($arg),+)).ok();
+        }
+    };
+}
+
+macro_rules! success {
+    ($msg:expr) => {
+        if $crate::TUI_ENABLED.load(::std::sync::atomic::Ordering::Relaxed) {
+            ::cliclack::log::success($msg).ok();
+        }
+    };
+    ($fmt:expr, $($arg:expr),+) => {
+        if $crate::TUI_ENABLED.load(::std::sync::atomic::Ordering::Relaxed) {
+            ::cliclack::log::success(format!($fmt, $($arg),+)).ok();
+        }
+    };
+}
+
 pub(crate) use intro;
-#[allow(unused_imports)]
-pub(crate) use note;
 pub(crate) use outro;
 pub(crate) use outro_cancel;
-#[allow(unused_imports)]
-pub(crate) use outro_note;
 pub(crate) use remark;
 pub(crate) use step;
 pub(crate) use success;
-#[allow(unused_imports)]
-pub(crate) use warning;

@@ -3,7 +3,7 @@ members = ["crates/cli", "crates/core", "crates/commands"]
 resolver = "2"
 
 [workspace.package]
-authors = ["reflections-team"]
+authors = ["Oleg Bedrin <https://github.com/GoldenSylph>"]
 categories = ["development-tools"]
 description = "A command-line tool for Solidity reflections and analysis"
 edition = "2024"

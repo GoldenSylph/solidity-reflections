@@ -6,4 +6,7 @@ pub type Result<T> = std::result::Result<T, ReflectionsError>;
 
 pub mod config;
 pub mod errors;
+pub mod generator;
+pub mod parser;
+pub mod remappings;
 pub mod utils;

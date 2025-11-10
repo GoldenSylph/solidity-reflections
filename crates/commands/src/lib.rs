@@ -12,7 +12,7 @@ use std::{
     path::PathBuf,
     sync::atomic::{AtomicBool, Ordering},
 };
-use utils::{get_config_location, intro, outro, outro_cancel, step};
+use utils::{intro, outro, outro_cancel, step};
 
 pub mod commands;
 pub mod utils;
@@ -36,7 +36,9 @@ impl clap::ValueEnum for ConfigLocation {
     fn to_possible_value(&self) -> Option<clap::builder::PossibleValue> {
         Some(match self.0 {
             reflections_core::config::ConfigLocation::Foundry => PossibleValue::new("foundry"),
-            reflections_core::config::ConfigLocation::Reflections => PossibleValue::new("reflections"),
+            reflections_core::config::ConfigLocation::Reflections => {
+                PossibleValue::new("reflections")
+            }
         })
     }
 }
@@ -81,18 +83,27 @@ pub async fn run(command: Command, verbosity: Verbosity<CustomLevel>) -> Result<
                 .ok()
                 .filter(|p| !p.is_empty())
                 .map_or(env::current_dir()?, PathBuf::from);
-            
-            let config_loc = if let Some(loc) = cmd.config_location {
-                loc.into()
-            } else {
-                get_config_location()?.into()
-            };
-            
-            let paths = Paths::with_root_and_config(&root, Some(config_loc))?;
+
+            let paths = Paths::with_root_and_config(&root, None)?;
             commands::init::init_command(&paths, cmd).await.inspect_err(|_| {
                 outro_cancel!("An error occurred during initialization");
             })?;
             outro!("Done initializing!");
+        }
+        Command::Generate(cmd) => {
+            intro!("✨ Reflections Generate ✨");
+            step!("Generate Solidity reflection library");
+            // Use current dir as root unless specified by env
+            let root = env::var("REFLECTIONS_PROJECT_ROOT")
+                .ok()
+                .filter(|p| !p.is_empty())
+                .map_or(env::current_dir()?, PathBuf::from);
+
+            let paths = Paths::with_root_and_config(&root, None)?;
+            commands::generate::generate_command(&paths, cmd).await.inspect_err(|_| {
+                outro_cancel!("An error occurred during generation");
+            })?;
+            outro!("Done generating!");
         }
         Command::Version(_) => {
             const VERSION: &str = env!("CARGO_PKG_VERSION");

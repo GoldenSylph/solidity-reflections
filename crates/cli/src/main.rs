@@ -3,9 +3,9 @@ use reflections_commands::{Args, commands::Parser as _, run};
 use yansi::{Condition, Paint as _};
 
 const HAVE_COLOR: Condition = Condition(|| {
-    std::env::var_os("NO_COLOR").is_none() &&
-        (Condition::CLICOLOR_LIVE)() &&
-        Condition::stdouterr_are_tty_live()
+    std::env::var_os("NO_COLOR").is_none()
+        && (Condition::CLICOLOR_LIVE)()
+        && Condition::stdouterr_are_tty_live()
 });
 
 #[tokio::main]

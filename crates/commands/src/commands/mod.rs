@@ -2,6 +2,7 @@ pub use clap::{Parser, Subcommand};
 use clap_verbosity_flag::{LogLevel, VerbosityFilter};
 use derive_more::derive::From;
 
+pub mod generate;
 pub mod init;
 
 #[derive(Copy, Clone, Debug, Default)]
@@ -54,6 +55,7 @@ pub struct Args {
 #[non_exhaustive]
 pub enum Command {
     Init(init::Init),
+    Generate(generate::Generate),
     Version(Version),
 }
 
