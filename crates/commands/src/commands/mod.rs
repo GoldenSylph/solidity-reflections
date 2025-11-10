@@ -41,7 +41,7 @@ Otherwise:
 
 /// A Solidity analysis and reflection tool
 #[derive(Parser, Debug, bon::Builder)]
-#[clap(name = "reflections", author = "reflections-team", version)]
+#[clap(name = "reflections", author = "Oleg Bedrin <https://github.com/GoldenSylph>", version)]
 #[non_exhaustive]
 pub struct Args {
     #[clap(subcommand)]

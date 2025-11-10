@@ -36,7 +36,7 @@ pub struct Generate {
     pub license: String,
 
     /// Solidity version pragma
-    #[arg(long, default_value = "^0.8.0")]
+    #[arg(long, default_value = "^0.8.24")]
     #[builder(default)]
     pub solidity_version: String,
 }

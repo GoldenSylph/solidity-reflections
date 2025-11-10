@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
 import {ShortString} from "@openzeppelin/contracts/utils/ShortStrings.sol";
