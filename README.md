@@ -341,7 +341,7 @@ The binary will be located at `target/release/reflections`.
 ## Documentation
 
 - [Usage Guide](USAGE.md) - Detailed usage examples
-- [Changelog](CHANGELOG.md) - Version history and changes
+- [Test Coverage Report](TEST_COVERAGE.md) - Tests coverage stats
 - [Contributing Guide](CONTRIBUTING.md) - How to contribute
 - [DI Framework Docs](crates/commands/assets/README.md) - Complete DI framework reference
 
